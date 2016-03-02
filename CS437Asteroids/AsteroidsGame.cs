@@ -13,11 +13,15 @@ namespace CS437Asteroids
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Scene scene;
+        GameInput input;
 
         public AsteroidsGame()
         {
             graphics = new GraphicsDeviceManager(this);
+            // graphics.IsFullScreen = true;
+
             Content.RootDirectory = "Content";
+
         }
 
         /// <summary>
@@ -28,8 +32,6 @@ namespace CS437Asteroids
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
@@ -42,7 +44,11 @@ namespace CS437Asteroids
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            // Set mouse position information
+            input = new GameInput(GraphicsDevice);
+            input.Initialize();
+
+            // Load the entire scene
             scene = new Scene(this);
         }
 
@@ -50,10 +56,7 @@ namespace CS437Asteroids
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.
         /// </summary>
-        protected override void UnloadContent()
-        {
-            // TODO: Unload any non ContentManager content here
-        }
+        protected override void UnloadContent() { }
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -65,8 +68,9 @@ namespace CS437Asteroids
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
-            scene.update(gameTime);
+            input.pollInput();
+
+            scene.update(gameTime, input);
 
             base.Update(gameTime);
         }
@@ -79,7 +83,6 @@ namespace CS437Asteroids
         {
             GraphicsDevice.Clear(Color.Gray);
 
-            // TODO: Add your drawing code here
             scene.Draw(gameTime, graphics);
 
             base.Draw(gameTime);

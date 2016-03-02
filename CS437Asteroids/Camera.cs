@@ -6,26 +6,41 @@ namespace CS437
     internal class Camera
     {
         public Vector3 position;
-        public float xRotation, yRotation, zRotation;
-        public float fieldOfView, nearPlaneDistance, farPlaneDistance, aspectRatio;
+        public float pitch, yaw, roll;
+        public float fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance;
 
-        public Matrix projection { get { return Matrix.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance); } }
+        public Matrix projection
+        {
+            get
+            {
+                return Matrix.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
+            }
+        }
+
         public Matrix view
         {
             get
             {
-                Quaternion qx = Quaternion.CreateFromAxisAngle(new Vector3(1, 0, 0), xRotation);
-                Quaternion qy = Quaternion.CreateFromAxisAngle(new Vector3(0, 1, 0), yRotation);
-                Quaternion qz = Quaternion.CreateFromAxisAngle(new Vector3(0, 0, 1), zRotation);
-                return Matrix.CreateTranslation(-position) * Matrix.CreateFromQuaternion(qx * qy * qz);
+                return Matrix.CreateTranslation(-position) * Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
             }
         }
 
+        /// <summary>
+        /// Camera Constructor has all optional parameters
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="pitch"></param>
+        /// <param name="yaw"></param>
+        /// <param name="roll"></param>
+        /// <param name="fieldOfView"></param>
+        /// <param name="nearPlaneDistance"></param>
+        /// <param name="farPlaneDistance"></param>
+        /// <param name="aspectRatio"></param>
         public Camera(
             Vector3? position = null,
-            float? xRotation = null,
-            float? yRotation = null,
-            float? zRotation = null,
+            float? pitch = null,
+            float? yaw = null,
+            float? roll = null,
             float? fieldOfView = null,
             float? nearPlaneDistance = null,
             float? farPlaneDistance = null,
@@ -36,18 +51,10 @@ namespace CS437
             this.nearPlaneDistance = nearPlaneDistance ?? 0.1f;
             this.farPlaneDistance = farPlaneDistance ?? 10000.0f;
             this.aspectRatio = aspectRatio ?? 800f / 600f;
-            this.xRotation = xRotation ?? 0.0f;
-            this.yRotation = yRotation ?? 0.0f;
-            this.zRotation = zRotation ?? 0.0f;
+            this.pitch = pitch ?? 0.0f;
+            this.yaw = yaw ?? 0.0f;
+            this.roll = roll ?? 0.0f;
         }
 
-        public void Update(GameTime gameTime)
-        {
-        }
-
-        public void Initialize()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

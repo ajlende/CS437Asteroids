@@ -43,12 +43,48 @@ namespace CS437
         /// <summary>
         /// Time it takes to reload in milliseconds
         /// </summary>
-        public int reloadSpeed { get; set; }
+        public int reloadSpeed;
 
         /// <summary>
         /// Position in the world of the spaceship
         /// </summary>
-        public Vector3 position { get; set; }
+        public Vector3 position;
+
+        /// <summary>
+        /// How far the camera should be away from the 
+        /// </summary>
+        public Vector3 cameraOffset { get; set; }
+
+        /// <summary>
+        /// Spaceship's pitch or rotation about the x-axis
+        /// </summary>
+        public float pitch { get; set; }
+
+        /// <summary>
+        /// Spaceship's yaw or rotation about the y-axis
+        /// </summary>
+        public float yaw { get; set; }
+
+        /// <summary>
+        /// Spaceship's roll or rotation about the z-axis
+        /// </summary>
+        public float roll { get; set; }
+
+        public Quaternion quaternion
+        {
+            get
+            {
+                return Quaternion.CreateFromYawPitchRoll(yaw, pitch, roll);
+            }
+        }
+
+        public Vector3 forward
+        {
+            get
+            {
+                return Vector3.Transform(Vector3.Forward, quaternion);
+            }
+        }
 
         /// <summary>
         /// Constructor for a spaceship
@@ -62,6 +98,7 @@ namespace CS437
             this.position = position;
             this.scale = scale;
             this.reloadSpeed = reloadSpeed;
+            this.cameraOffset = cameraOffset;
 
             reloadTimer = reloadSpeed;
             spaceship = Content.Load<Model>("Models/spaceship");
@@ -75,7 +112,7 @@ namespace CS437
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
-                    effect.World = Matrix.CreateTranslation(position) * Matrix.CreateScale(scale);
+                    effect.World = Matrix.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix.CreateTranslation(position) * Matrix.CreateScale(scale);
                     effect.View = view;
                     effect.Projection = projection;
                     effect.TextureEnabled = true;

@@ -32,13 +32,13 @@ namespace CS437
         /// The size of the cube, used so that we can resize the box
         /// for different sized environments.
         /// </summary>
-        private float size = 500f;
+        private float size = 5000f;
 
         /// <summary>
         /// Creates a new skybox
         /// </summary>
         /// <param name="skyboxTexture">the name of the skybox texture to use</param>
-        public Skybox(string skyboxTexture, ContentManager Content)
+        public Skybox(ContentManager Content, string skyboxTexture)
         {
             skyBox = Content.Load<Model>("Models/cube");
             skyBoxTexture = Content.Load<TextureCube>(skyboxTexture);
@@ -61,11 +61,8 @@ namespace CS437
             {
                 pass.Apply();
 
-                // Draw all of the components of the mesh, but we know the cube really
-                // only has one mesh
                 foreach (ModelMesh mesh in skyBox.Meshes)
                 {
-                    // Assign the appropriate values to each of the parameters
                     foreach (ModelMeshPart part in mesh.MeshParts)
                     {
                         part.Effect = skyBoxEffect;
@@ -77,7 +74,6 @@ namespace CS437
                         part.Effect.Parameters["CameraPosition"].SetValue(cameraPosition);
                     }
 
-                    // Draw the mesh with the skybox effect
                     mesh.Draw();
                 }
             }
