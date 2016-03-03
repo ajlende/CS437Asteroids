@@ -6,23 +6,23 @@ namespace CS437
     internal class Camera
     {
         public Vector3 position;
+
         public float pitch, yaw, roll;
         public float fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance;
 
-        public Matrix projection
+        public Matrix rotation
         {
-            get
-            {
-                return Matrix.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
-            }
+            get { return Matrix.CreateFromYawPitchRoll(yaw, pitch, roll); }
         }
 
         public Matrix view
         {
-            get
-            {
-                return Matrix.CreateTranslation(-position) * Matrix.CreateFromYawPitchRoll(yaw, pitch, roll);
-            }
+            get { return Matrix.CreateTranslation(-position) * rotation; }
+        }
+
+        public Matrix projection
+        {
+            get { return Matrix.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance); }
         }
 
         /// <summary>
@@ -55,6 +55,5 @@ namespace CS437
             this.yaw = yaw ?? 0.0f;
             this.roll = roll ?? 0.0f;
         }
-
     }
 }

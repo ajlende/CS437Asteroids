@@ -62,9 +62,7 @@
   <ItemGroup>
     <Compile Include="Asteroid.cs" />
     <Compile Include="Camera.cs" />
-    <Compile Include="DrawableGameEntity.cs" />
     <Compile Include="AsteroidsGame.cs" />
-    <Compile Include="GameEntity.cs" />
     <Compile Include="GameInput.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
