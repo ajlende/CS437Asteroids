@@ -16,8 +16,6 @@ namespace CS437
 
         private List<Asteroid> asteroids;
 
-        private Game game;
-
         public Scene(Game Game)
         {
             camera = new Camera(fieldOfView: MathHelper.PiOver4,
@@ -30,11 +28,11 @@ namespace CS437
             asteroids = new List<Asteroid>();
 
             playerShip = new Spaceship(Game.Content,
-                position: new Vector3(0.0f, 0.0f, 0.0f),
-                cameraOffset: new Vector3(0.0f, 108f, 35f),
+                Position: new Vector3(0.0f, 0.0f, 0.0f),
+                CameraOffset: new Vector3(0.0f, 108f, 35f),
                 scale: 0.5f,
                 fireTorpedo: () => {
-                    var torpedo = new Torpedo(game, Vector3.Zero);
+                    var torpedo = new Torpedo(Game, Vector3.Zero);
                     torpedos.Add(torpedo);
                     Console.WriteLine("BOOM! <" + torpedos.Count + ">");
                     return torpedo;
@@ -57,7 +55,9 @@ namespace CS437
                 torpedo.Update(gameTime);
             }
 
-            camera.position = playerShip.position;
+            // camera.Position = playerShip.Position;
+            // camera.Up = playerShip.Up;
+            // camera.Forward = Vector3.Negate(playerShip.Forward);
 
         }
 
@@ -66,21 +66,21 @@ namespace CS437
             // Console.WriteLine("Ship:   " + playerShip.position);
             // Console.WriteLine("Camera: " + camera.position);
 
-            var view = camera.view;
-            var projection = camera.projection;
+            var view = camera.View;
+            var projection = camera.Projection;
 
             // Console.WriteLine("View:       " + camera.view);
             // Console.WriteLine("Projection: " + camera.projection);
 
             ////////////////////////// SkyBox //////////////////////////
-            // RasterizerState originalRasterizerState = graphics.GraphicsDevice.RasterizerState;
-            // RasterizerState rasterizerState = new RasterizerState();
-            // rasterizerState.CullMode = CullMode.None;
-            // graphics.GraphicsDevice.RasterizerState = rasterizerState;
+            RasterizerState originalRasterizerState = graphics.GraphicsDevice.RasterizerState;
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            graphics.GraphicsDevice.RasterizerState = rasterizerState;
 
-            // skybox.Draw(camera.view, camera.projection, camera.position);
+            skybox.Draw(camera.View, camera.Projection, camera.Position);
 
-            // graphics.GraphicsDevice.RasterizerState = originalRasterizerState;
+            graphics.GraphicsDevice.RasterizerState = originalRasterizerState;
 
             ////////////////////////// Ship //////////////////////////
             playerShip.Draw(camera);
