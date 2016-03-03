@@ -45,26 +45,31 @@ namespace CS437
         Func<Torpedo> fireTorpedo;
 
         /// <summary>
-        /// Position in the world of the spaceship
-        /// </summary>
-        public Vector3 Position { get; set; }
-
-        /// <summary>
         /// How far the camera should be away from the 
         /// </summary>
         public Vector3 CameraOffset { get; set; }
 
         /// <summary>
+        /// Position in the world of the spaceship
+        /// </summary>
+        public Vector3 Position { get; set; }
+
+        /// <summary>
+        /// The velocity of the spaceship
+        /// </summary>
+        public Vector3 Velocity { get; set; }
+
+        /// <summary>
         /// Quaternion representing the rotation of the spaceship
         /// </summary>
-        public Quaternion Rotation { get; set; }
+        public Quaternion Orientation { get; set; }
 
         /// <summary>
         /// The forward vector for the spaceship
         /// </summary>
         public Vector3 Forward
         {
-            get { return Vector3.Transform(Vector3.Forward, Rotation); }
+            get { return Vector3.Transform(Vector3.Forward, Orientation); }
         }
 
         /// <summary>
@@ -72,20 +77,15 @@ namespace CS437
         /// </summary>
         public Vector3 Up
         {
-            get { return Vector3.Transform(Vector3.Up, Rotation); }
-        }
-
-        public Vector3 Right
-        {
-            get { return Vector3.Transform(Vector3.Right, Rotation); }
+            get { return Vector3.Transform(Vector3.Up, Orientation); }
         }
 
         /// <summary>
-        /// The world matrix for the spaceship
+        /// Right vector for the spaceship
         /// </summary>
-        public Matrix World
+        public Vector3 Right
         {
-            get { return Matrix.CreateScale(scale) * Matrix.CreateFromQuaternion(Rotation) * Matrix.CreateTranslation(Position); }
+            get { return Vector3.Transform(Vector3.Right, Orientation); }
         }
 
         /// <summary>
@@ -108,37 +108,43 @@ namespace CS437
             this.reloadSpeed = reloadSpeed;
             this.fireTorpedo = fireTorpedo;
 
-            Rotation = Quaternion.Identity;
+            Orientation = Quaternion.Identity;
 
             reloadTimer = 0;
+
             spaceship = Content.Load<Model>("Models/spaceship");
             spaceshipTexture = Content.Load<Texture2D>("Textures/spaceship");
         }
 
-        public void addRoll(float amount, float speed, float time)
+        public void addRoll(float amount, float time)
         {
-            amount *= time * speed * time;
+            amount *= time;
             Quaternion rotator = Quaternion.CreateFromAxisAngle(Forward, amount);
-            Rotation = rotator * Rotation;
+            Orientation = rotator * Orientation;
         }
 
-        public void addPitch(float amount, float speed, float time)
+        public void addPitch(float amount, float time)
         {
-            amount *= time * speed * time;
+            amount *= time;
             Quaternion rotator = Quaternion.CreateFromAxisAngle(Right, amount);
-            Rotation = rotator * Rotation;
+            Orientation = rotator * Orientation;
         }
 
-        public void addYaw(float amount, float speed, float time)
+        public void addYaw(float amount, float time)
         {
-            amount *= time * speed * time;
+            amount *= time;
             Quaternion rotator = Quaternion.CreateFromAxisAngle(Up, amount);
-            Rotation = rotator * Rotation;
+            Orientation = rotator * Orientation;
         }
 
-        public void addThrust(float amount, float speed, float time)
+        public void addThrust(float amount, float time)
         {
-            Position += Forward * amount * speed * time;
+            Velocity += Forward * amount * time;
+        }
+
+        public void slowDown(float amount, float time)
+        {
+            Velocity += Vector3.Negate(Velocity) * amount * time;
         }
 
         /// <summary>
@@ -148,39 +154,44 @@ namespace CS437
         public void Draw(Camera camera)
         {
             // Console.WriteLine("View:       " + view);
-            foreach(ModelMesh mesh in spaceship.Meshes)
+            foreach (ModelMesh mesh in spaceship.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
-                    effect.World = World;
+                    effect.World = Matrix.CreateScale(scale)
+                        * Matrix.CreateFromQuaternion(Orientation)
+                        * Matrix.CreateTranslation(Position);
                     effect.View = camera.View;
                     effect.Projection = camera.Projection;
                     effect.TextureEnabled = true;
                     effect.Texture = spaceshipTexture;
                 }
-
                 mesh.Draw();
             }
         }
 
         public void Update(GameTime gameTime, GameInput input)
         {
-            float t = (float) gameTime.ElapsedGameTime.TotalSeconds;
+            float t = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             //////////////////// Look ////////////////////
-            addYaw(-input.xDiff, 4f, t);
-            addPitch(-input.yDiff, 4f, t);
+            addYaw(-input.xDiff * 0.1f, t);
+            addPitch(-input.yDiff * 0.1f, t);
             if (input.keyboard.IsKeyDown(Keys.D))
-                addRoll(2f, 50f, t);
+                addRoll(0.5f, t);
             if (input.keyboard.IsKeyDown(Keys.A))
-                addRoll(-2f, 50f, t);
+                addRoll(-0.5f, t);
 
             //////////////////// Move ////////////////////
             if (input.keyboard.IsKeyDown(Keys.W))
-                addThrust(5f, 1f, t);
+                addThrust(0.5f, t);
             if (input.keyboard.IsKeyDown(Keys.S))
-                addThrust(-5f, 1f, t);
+                addThrust(-0.5f, t);
+            if (input.keyboard.IsKeyDown(Keys.LeftShift))
+                slowDown(3f, t);
+
+            Position += Velocity * t;
 
             //////////////////// Projectiles ////////////////////
             if (reloadTimer > 0) reloadTimer -= gameTime.ElapsedGameTime.Milliseconds;
