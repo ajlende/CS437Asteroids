@@ -4,29 +4,35 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace CS437
 {
-    internal class Torpedo : Projectile
+    internal class Torpedo
     {
+        private Game game;
+
         private Model model;
         // Effect glow;
 
-        public Torpedo(Game game, Vector3 position) : base(game, position)
+        public Vector3 position { get; set; }
+
+        public Torpedo(Game game, Vector3 position)
         {
+            this.game = game;
+            this.position = position;
         }
 
-        public override void Draw(GameTime gameTime)
+        public void Initialize()
         {
-            throw new NotImplementedException();
-        }
-
-        public override void Initialize()
-        {
-            model = Game.Content.Load<Model>("Models/torpedo");
+            model = game.Content.Load<Model>("Models/torpedo");
             // glow = Game.Content.Load<Effect>("Effects/glow");
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
-            throw new NotImplementedException();
+            // TODO: Torpedo Update
+        }
+
+        public void Draw(Camera camera)
+        {
+            // TODO: Torpedo Draw
         }
     }
 }

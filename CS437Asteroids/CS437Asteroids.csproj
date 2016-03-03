@@ -67,7 +67,6 @@
     <Compile Include="GameEntity.cs" />
     <Compile Include="GameInput.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Skybox.cs" />
