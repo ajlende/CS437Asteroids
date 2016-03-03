@@ -18,7 +18,6 @@ namespace CS437Asteroids
         public AsteroidsGame()
         {
             graphics = new GraphicsDeviceManager(this);
-            // graphics.IsFullScreen = true;
 
             Content.RootDirectory = "Content";
 
@@ -32,6 +31,10 @@ namespace CS437Asteroids
         /// </summary>
         protected override void Initialize()
         {
+            // graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+            // graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
+            // graphics.IsFullScreen = true;
+            // graphics.ApplyChanges();
             base.Initialize();
         }
 

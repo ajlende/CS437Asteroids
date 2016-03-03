@@ -17,9 +17,9 @@ namespace CS437
             {
                 switch (size)
                 {
-                    case Size.LARGE: return 1024f;
+                    case Size.LARGE:  return 1024f;
                     case Size.MEDIUM: return 512f;
-                    case Size.SMALL: return 256f;
+                    case Size.SMALL:  return 256f;
                 }
                 return 0f;
             }
@@ -27,22 +27,18 @@ namespace CS437
 
         public Asteroid(Vector3 position, Size size)
         {
-
-        }
-
-        public void Draw(GameTime gameTime)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Initialize()
-        {
-            throw new NotImplementedException();
+            this.size = size;
         }
 
         public void Update(GameTime gameTime)
         {
-            throw new NotImplementedException();
+            // TODO: Asteroid Update
         }
+
+        public void Draw(Camera camera)
+        {
+            // TODO: Asteroid Draw
+        }
+
     }
 }
