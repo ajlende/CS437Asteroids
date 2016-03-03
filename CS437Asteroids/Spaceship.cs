@@ -45,21 +45,6 @@ namespace CS437
         Func<Torpedo> fireTorpedo;
 
         /// <summary>
-        /// Spaceship's pitch or rotation about the x-axis
-        /// </summary>
-        public float pitch;
-
-        /// <summary>
-        /// Spaceship's yaw or rotation about the y-axis
-        /// </summary>
-        public float yaw;
-
-        /// <summary>
-        /// Spaceship's roll or rotation about the z-axis
-        /// </summary>
-        public float roll;
-
-        /// <summary>
         /// Position in the world of the spaceship
         /// </summary>
         public Vector3 Position { get; set; }
@@ -70,16 +55,16 @@ namespace CS437
         public Vector3 CameraOffset { get; set; }
 
         /// <summary>
+        /// Quaternion representing the rotation of the spaceship
+        /// </summary>
+        public Quaternion Rotation { get; set; }
+
+        /// <summary>
         /// The forward vector for the spaceship
         /// </summary>
         public Vector3 Forward
         {
-            get
-            {
-                var f = Vector3.Transform(Vector3.Forward, Matrix.CreateFromYawPitchRoll(yaw, pitch, roll));
-                f.Normalize();
-                return f;
-            }
+            get { return Vector3.Transform(Vector3.Forward, Rotation); }
         }
 
         /// <summary>
@@ -87,20 +72,20 @@ namespace CS437
         /// </summary>
         public Vector3 Up
         {
-            get
-            {
-                var u = Vector3.Transform(Vector3.Up, Matrix.CreateFromYawPitchRoll(yaw, pitch, roll));
-                u.Normalize();
-                return u;
-            }
+            get { return Vector3.Transform(Vector3.Up, Rotation); }
         }
 
+        public Vector3 Right
+        {
+            get { return Vector3.Transform(Vector3.Right, Rotation); }
+        }
+
+        /// <summary>
+        /// The world matrix for the spaceship
+        /// </summary>
         public Matrix World
         {
-            get
-            {
-                return Matrix.CreateScale(scale) * Matrix.CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix.CreateTranslation(Position);
-            }
+            get { return Matrix.CreateScale(scale) * Matrix.CreateFromQuaternion(Rotation) * Matrix.CreateTranslation(Position); }
         }
 
         /// <summary>
@@ -123,9 +108,37 @@ namespace CS437
             this.reloadSpeed = reloadSpeed;
             this.fireTorpedo = fireTorpedo;
 
+            Rotation = Quaternion.Identity;
+
             reloadTimer = 0;
             spaceship = Content.Load<Model>("Models/spaceship");
             spaceshipTexture = Content.Load<Texture2D>("Textures/spaceship");
+        }
+
+        public void addRoll(float amount, float speed, float time)
+        {
+            amount *= time * speed * time;
+            Quaternion rotator = Quaternion.CreateFromAxisAngle(Forward, amount);
+            Rotation = rotator * Rotation;
+        }
+
+        public void addPitch(float amount, float speed, float time)
+        {
+            amount *= time * speed * time;
+            Quaternion rotator = Quaternion.CreateFromAxisAngle(Right, amount);
+            Rotation = rotator * Rotation;
+        }
+
+        public void addYaw(float amount, float speed, float time)
+        {
+            amount *= time * speed * time;
+            Quaternion rotator = Quaternion.CreateFromAxisAngle(Up, amount);
+            Rotation = rotator * Rotation;
+        }
+
+        public void addThrust(float amount, float speed, float time)
+        {
+            Position += Forward * amount * speed * time;
         }
 
         /// <summary>
@@ -155,18 +168,19 @@ namespace CS437
         {
             float t = (float) gameTime.ElapsedGameTime.TotalSeconds;
 
-            //////////////////// Move and Look ////////////////////
-            yaw -= input.xDiff * 0.5f * t;
-            pitch += input.yDiff * 0.5f * t;
-
-            if (input.keyboard.IsKeyDown(Keys.A))
-                roll -= 3.0f * t;
+            //////////////////// Look ////////////////////
+            addYaw(-input.xDiff, 4f, t);
+            addPitch(-input.yDiff, 4f, t);
             if (input.keyboard.IsKeyDown(Keys.D))
-                roll += 3.0f * t;
+                addRoll(2f, 50f, t);
+            if (input.keyboard.IsKeyDown(Keys.A))
+                addRoll(-2f, 50f, t);
+
+            //////////////////// Move ////////////////////
             if (input.keyboard.IsKeyDown(Keys.W))
-                Position += Forward * 900f * t;
+                addThrust(5f, 1f, t);
             if (input.keyboard.IsKeyDown(Keys.S))
-                Position -= Forward * 900f * t;
+                addThrust(-5f, 1f, t);
 
             //////////////////// Projectiles ////////////////////
             if (reloadTimer > 0) reloadTimer -= gameTime.ElapsedGameTime.Milliseconds;

@@ -31,7 +31,8 @@ namespace CS437
                 Position: new Vector3(0.0f, 0.0f, 0.0f),
                 CameraOffset: new Vector3(0.0f, 108f, 35f),
                 scale: 0.5f,
-                fireTorpedo: () => {
+                fireTorpedo: () =>
+                {
                     var torpedo = new Torpedo(Game, Vector3.Zero);
                     torpedos.Add(torpedo);
                     Console.WriteLine("BOOM! <" + torpedos.Count + ">");
@@ -49,15 +50,15 @@ namespace CS437
             {
                 asteroid.Update(gameTime);
             }
-            
+
             foreach (var torpedo in torpedos)
             {
                 torpedo.Update(gameTime);
             }
 
-            // camera.Position = playerShip.Position;
-            // camera.Up = playerShip.Up;
-            // camera.Forward = Vector3.Negate(playerShip.Forward);
+            camera.Position = playerShip.Position;
+            camera.Up = playerShip.Up;
+            camera.Forward = playerShip.Forward;
 
         }
 
