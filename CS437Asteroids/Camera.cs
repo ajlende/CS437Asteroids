@@ -53,5 +53,18 @@ namespace CS437
             this.farPlaneDistance = farPlaneDistance ?? 10000.0f;
             this.aspectRatio = aspectRatio ?? 800f / 600f;
         }
+
+        public void Update(Spaceship playerShip)
+        {
+            Position = playerShip.Position;
+            Position += playerShip.Right * (playerShip.CameraOffset.X);
+            Position += playerShip.Up * (playerShip.CameraOffset.Y);
+            Position += playerShip.Forward * (playerShip.CameraOffset.Z);
+            Up = playerShip.Up;
+            Forward = Vector3.Negate(playerShip.Forward);
+            Matrix cameraRotation = Matrix.CreateFromAxisAngle(playerShip.Right, MathHelper.Pi / 8f);
+            Up = Vector3.Transform(Up, cameraRotation);
+            Forward = Vector3.Transform(Forward, cameraRotation);
+        }
     }
 }

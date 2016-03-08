@@ -32,8 +32,8 @@ namespace CS437
 
             playerShip = new Spaceship(Game.Content,
                 Position: new Vector3(0.0f, 0.0f, 0.0f),
-                CameraOffset: new Vector3(0.0f, 108f, 35f),
-                scale: 0.5f,
+                CameraOffset: new Vector3(0.0f, 300f, 600f),
+                scale: 0.25f,
                 fireTorpedo: () =>
                 {
                     var torpedo = new Torpedo(Game, Vector3.Zero);
@@ -70,23 +70,11 @@ namespace CS437
             foreach (var torpedo in torpedos)
                 torpedo.Update(gameTime);
 
-            camera.Position = playerShip.Position;
-            camera.Up = playerShip.Up;
-            camera.Forward = playerShip.Forward;
-
+            camera.Update(playerShip);
         }
 
         public void Draw(GameTime gameTime, GraphicsDeviceManager graphics)
         {
-            // Console.WriteLine("Ship:   " + playerShip.position);
-            // Console.WriteLine("Camera: " + camera.position);
-
-            var view = camera.View;
-            var projection = camera.Projection;
-
-            // Console.WriteLine("View:       " + camera.view);
-            // Console.WriteLine("Projection: " + camera.projection);
-
             ////////////////////////// SkyBox //////////////////////////
             RasterizerState originalRasterizerState = graphics.GraphicsDevice.RasterizerState;
             RasterizerState rasterizerState = new RasterizerState();
@@ -97,20 +85,17 @@ namespace CS437
 
             graphics.GraphicsDevice.RasterizerState = originalRasterizerState;
 
+            ////////////////////////// Asteroids //////////////////////////
+            foreach (var asteroid in asteroids)
+                asteroid.Draw(camera);
+
+            ////////////////////////// Torpedos //////////////////////////
+            foreach (var torpedo in torpedos)
+                torpedo.Draw(camera);
+
             ////////////////////////// Ship //////////////////////////
             playerShip.Draw(camera);
 
-            ////////////////////////// Asteroids //////////////////////////
-            foreach (var asteroid in asteroids)
-            {
-                asteroid.Draw(camera);
-            }
-            
-            ////////////////////////// Torpedos //////////////////////////
-            foreach (var torpedo in torpedos)
-            {
-                torpedo.Draw(camera);
-            }
         }
     }
 }

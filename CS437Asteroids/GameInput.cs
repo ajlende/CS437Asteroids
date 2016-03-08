@@ -18,14 +18,12 @@ namespace CS437
         private GraphicsDevice device;
 
         public KeyboardState keyboard;
-        public float xDiff { get; private set; }
-        public float yDiff { get; private set; }
+        public Vector2 mouseDelta;
 
         public GameInput(GraphicsDevice graphicsDevice)
         {
             device = graphicsDevice;
-            xDiff = 0f;
-            yDiff = 0f;
+            mouseDelta = Vector2.Zero;
         }
 
         public void Initialize()
@@ -47,13 +45,12 @@ namespace CS437
 
             if (newMouse != oldMouse)
             {
-                xDiff = newMouse.Position.X - oldMouse.Position.X;
-                yDiff = newMouse.Position.Y - oldMouse.Position.Y;
+                mouseDelta.X = newMouse.Position.X - oldMouse.Position.X;
+                mouseDelta.Y = newMouse.Position.Y - oldMouse.Position.Y;
             }
             else
             {
-                xDiff = 0f;
-                yDiff = 0f; 
+                mouseDelta = Vector2.Zero;
             }
 
             Mouse.SetPosition(device.Viewport.Width / 2, device.Viewport.Height / 2);

@@ -88,6 +88,13 @@ namespace CS437
             get { return Vector3.Transform(Vector3.Right, Orientation); }
         }
 
+        /// TODO: Temporaty variables to remove
+        Vector2 _mouseAbsolute = Vector2.Zero;
+        Vector2 _smoothMouse = Vector2.Zero;
+        public float sensitivity = 20f;
+        public float smoothing = 30f;
+        public Vector2 clampInDegrees = new Vector2(MathHelper.Pi * 2, MathHelper.Pi);
+
         /// <summary>
         /// Constructor for a spaceship
         /// </summary>
@@ -104,9 +111,11 @@ namespace CS437
         {
             this.Position = Position;
             this.CameraOffset = CameraOffset;
+
+            this.fireTorpedo = fireTorpedo;
+
             this.scale = scale;
             this.reloadSpeed = reloadSpeed;
-            this.fireTorpedo = fireTorpedo;
 
             Orientation = Quaternion.Identity;
 
@@ -118,6 +127,7 @@ namespace CS437
 
         public void addRoll(float amount, float time)
         {
+            amount *= MathHelper.PiOver2;
             amount *= time;
             Quaternion rotator = Quaternion.CreateFromAxisAngle(Forward, amount);
             Orientation = rotator * Orientation;
@@ -125,6 +135,7 @@ namespace CS437
 
         public void addPitch(float amount, float time)
         {
+            amount *= MathHelper.PiOver2;
             amount *= time;
             Quaternion rotator = Quaternion.CreateFromAxisAngle(Right, amount);
             Orientation = rotator * Orientation;
@@ -132,6 +143,7 @@ namespace CS437
 
         public void addYaw(float amount, float time)
         {
+            amount *= MathHelper.PiOver2;
             amount *= time;
             Quaternion rotator = Quaternion.CreateFromAxisAngle(Up, amount);
             Orientation = rotator * Orientation;
@@ -176,18 +188,27 @@ namespace CS437
             float t = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             //////////////////// Look ////////////////////
-            addYaw(-input.xDiff * 0.1f, t);
-            addPitch(-input.yDiff * 0.1f, t);
+            addYaw(-input.mouseDelta.X * 0.1f, t);
+            addPitch(input.mouseDelta.Y * 0.1f, t);
             if (input.keyboard.IsKeyDown(Keys.D))
-                addRoll(0.5f, t);
+                addRoll(1.2f, t);
             if (input.keyboard.IsKeyDown(Keys.A))
-                addRoll(-0.5f, t);
+                addRoll(-1.2f, t);
+
+            // Vector2 scaledMouse = input.mouseDelta * (sensitivity * smoothing * t);
+            // _smoothMouse = Vector2.Lerp(_smoothMouse, scaledMouse, 1f / smoothing);
+            // _mouseAbsolute += _smoothMouse;
+            // _mouseAbsolute = Vector2.Clamp(_mouseAbsolute, clampInDegrees * -0.5f, clampInDegrees * 0.5f);
+            // Quaternion xrotator = Quaternion.CreateFromAxisAngle(Up, -_mouseAbsolute.X);
+            // Orientation = xrotator * Orientation;
+            // Quaternion yrotator = Quaternion.CreateFromAxisAngle(Right, _mouseAbsolute.Y);
+            // Orientation = yrotator * Orientation;
 
             //////////////////// Move ////////////////////
             if (input.keyboard.IsKeyDown(Keys.W))
-                addThrust(0.5f, t);
+                addThrust(-400f, t);
             if (input.keyboard.IsKeyDown(Keys.S))
-                addThrust(-0.5f, t);
+                addThrust(400f, t);
             if (input.keyboard.IsKeyDown(Keys.LeftShift))
                 slowDown(3f, t);
 
