@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -26,6 +27,8 @@ namespace CS437
             torpedos = new List<Torpedo>();
 
             asteroids = new List<Asteroid>();
+            asteroids.Add(new Asteroid(Game.Content, new Vector3(0f, 0f, 20f), Asteroid.Size.SMALL));
+            initializeAsteroids(Game.Content);
 
             playerShip = new Spaceship(Game.Content,
                 Position: new Vector3(0.0f, 0.0f, 0.0f),
@@ -40,21 +43,32 @@ namespace CS437
                 });
         }
 
-        public void update(GameTime gameTime, GameInput input)
+        private void initializeAsteroids(ContentManager Content)
+        {
+            float spaceBetween = 500f;
+            for (int i = 0; i < 5; i++)
+            {
+                for (int j = 0; j < 5; j++)
+                {
+                    for (int k = 0; k < 5; k++)
+                    {
+                        asteroids.Add(new Asteroid(Content, new Vector3(i * spaceBetween, j * spaceBetween, k * spaceBetween), Asteroid.Size.MEDIUM));
+                    }
+                }
+            }
+        }
+
+        public void Update(GameTime gameTime, GameInput input)
         {
             float t = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             playerShip.Update(gameTime, input);
 
             foreach (var asteroid in asteroids)
-            {
                 asteroid.Update(gameTime);
-            }
 
             foreach (var torpedo in torpedos)
-            {
                 torpedo.Update(gameTime);
-            }
 
             camera.Position = playerShip.Position;
             camera.Up = playerShip.Up;

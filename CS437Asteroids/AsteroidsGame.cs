@@ -18,9 +18,7 @@ namespace CS437Asteroids
         public AsteroidsGame()
         {
             graphics = new GraphicsDeviceManager(this);
-
             Content.RootDirectory = "Content";
-
         }
 
         /// <summary>
@@ -73,7 +71,7 @@ namespace CS437Asteroids
 
             input.pollInput();
 
-            scene.update(gameTime, input);
+            scene.Update(gameTime, input);
 
             base.Update(gameTime);
         }
