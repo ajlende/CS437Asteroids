@@ -107,7 +107,7 @@ namespace CS437
             Vector3 CameraOffset,
             Func<Torpedo> fireTorpedo,
             float scale = 1,
-            int reloadSpeed = 5000)
+            int reloadSpeed = 1000)
         {
             this.Position = Position;
             this.CameraOffset = CameraOffset;

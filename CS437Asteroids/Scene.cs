@@ -32,11 +32,11 @@ namespace CS437
 
             playerShip = new Spaceship(Game.Content,
                 Position: new Vector3(0.0f, 0.0f, 0.0f),
-                CameraOffset: new Vector3(0.0f, 300f, 600f),
-                scale: 0.25f,
+                CameraOffset: new Vector3(0.0f, 150f, 300f),
+                scale: 0.125f,
                 fireTorpedo: () =>
                 {
-                    var torpedo = new Torpedo(Game, Vector3.Zero);
+                    var torpedo = new Torpedo(Game.Content, playerShip.Position, -playerShip.Forward * 1000f);
                     torpedos.Add(torpedo);
                     Console.WriteLine("BOOM! <" + torpedos.Count + ">");
                     return torpedo;
