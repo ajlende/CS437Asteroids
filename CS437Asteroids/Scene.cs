@@ -45,6 +45,8 @@ namespace CS437
 
         private void initializeAsteroids(ContentManager Content)
         {
+            Array values = Enum.GetValues(typeof(Asteroid.Size));
+            Random random = new Random();
             float spaceBetween = 500f;
             for (int i = 0; i < 5; i++)
             {
@@ -52,7 +54,9 @@ namespace CS437
                 {
                     for (int k = 0; k < 5; k++)
                     {
-                        asteroids.Add(new Asteroid(Content, new Vector3(i * spaceBetween, j * spaceBetween, k * spaceBetween), Asteroid.Size.MEDIUM));
+                        Asteroid.Size randomSize = (Asteroid.Size)values.GetValue(random.Next(values.Length));
+                        Asteroid newAsteroid = new Asteroid(Content, new Vector3(i * spaceBetween, j * spaceBetween, k * spaceBetween), randomSize);
+                        asteroids.Add(newAsteroid);
                     }
                 }
             }
