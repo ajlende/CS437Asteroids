@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,53 +6,53 @@ namespace CS437
 {
     class GameInput
     {
-        private KeyboardState oldKeyboard;
-        private GamePadState oldGamepad;
-        private MouseState oldMouse;
+        private KeyboardState _originalKeyboard;
+        private GamePadState _originalGamepad;
+        private MouseState _originalMouse;
 
-        private KeyboardState newKeyboard;
-        private GamePadState newGamepad;
-        private MouseState newMouse;
+        private KeyboardState _currentKeyboard;
+        private GamePadState _currentGamepad;
+        private MouseState _currentMouse;
 
-        private GraphicsDevice device;
+        private GraphicsDevice _device;
 
-        public KeyboardState keyboard;
-        public Vector2 mouseDelta;
+        public KeyboardState KeyboardState;
+        public Vector2 MouseDelta;
 
         public GameInput(GraphicsDevice graphicsDevice)
         {
-            device = graphicsDevice;
-            mouseDelta = Vector2.Zero;
+            _device = graphicsDevice;
+            MouseDelta = Vector2.Zero;
         }
 
         public void Initialize()
         {
-            Mouse.SetPosition(device.Viewport.Width / 2, device.Viewport.Height / 2);
+            Mouse.SetPosition(_device.Viewport.Width / 2, _device.Viewport.Height / 2);
 
-            oldKeyboard = Keyboard.GetState();
-            oldMouse = Mouse.GetState();
-            oldGamepad = GamePad.GetState(PlayerIndex.One);
+            _originalKeyboard = Keyboard.GetState();
+            _originalMouse = Mouse.GetState();
+            _originalGamepad = GamePad.GetState(PlayerIndex.One);
         }
 
-        public void pollInput()
+        public void PollInput()
         {
-            newKeyboard = Keyboard.GetState();
-            newMouse = Mouse.GetState();
-            newGamepad = GamePad.GetState(PlayerIndex.One);
+            _currentKeyboard = Keyboard.GetState();
+            _currentMouse = Mouse.GetState();
+            _currentGamepad = GamePad.GetState(PlayerIndex.One);
 
-            keyboard = newKeyboard;
+            KeyboardState = _currentKeyboard;
 
-            if (newMouse != oldMouse)
+            if (_currentMouse != _originalMouse)
             {
-                mouseDelta.X = newMouse.Position.X - oldMouse.Position.X;
-                mouseDelta.Y = newMouse.Position.Y - oldMouse.Position.Y;
+                MouseDelta.X = _currentMouse.Position.X - _originalMouse.Position.X;
+                MouseDelta.Y = _currentMouse.Position.Y - _originalMouse.Position.Y;
             }
             else
             {
-                mouseDelta = Vector2.Zero;
+                MouseDelta = Vector2.Zero;
             }
 
-            Mouse.SetPosition(device.Viewport.Width / 2, device.Viewport.Height / 2);
+            Mouse.SetPosition(_originalMouse.Position.X, _originalMouse.Position.Y);
         }
     }
 }

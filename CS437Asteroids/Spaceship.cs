@@ -17,32 +17,32 @@ namespace CS437
         /// <summary>
         /// The spaceship model
         /// </summary>
-        private Model spaceship;
+        private Model _spaceship;
 
         /// <summary>
         /// The spaceship texture
         /// </summary>
-        private Texture2D spaceshipTexture;
+        private Texture2D _spaceshipTexture;
 
         /// <summary>
         /// The scale of the spaceship
         /// </summary>
-        private float scale;
+        private float _scale;
 
         /// <summary>
         /// Milliseconds remaining on timer
         /// </summary>
-        private int reloadTimer;
+        private int _reloadTimer;
 
         /// <summary>
         /// Time it takes to reload in milliseconds
         /// </summary>
-        public int reloadSpeed;
+        public int ReloadSpeed;
 
         /// <summary>
         /// Function to be invoked when firing a projectile
         /// </summary>
-        Func<Torpedo> fireTorpedo;
+        public Func<Torpedo> FireTorpedo;
 
         /// <summary>
         /// How far the camera should be away from the 
@@ -89,11 +89,11 @@ namespace CS437
         }
 
         /// TODO: Temporaty variables to remove
-        Vector2 _mouseAbsolute = Vector2.Zero;
-        Vector2 _smoothMouse = Vector2.Zero;
-        public float sensitivity = 20f;
-        public float smoothing = 30f;
-        public Vector2 clampInDegrees = new Vector2(MathHelper.Pi * 2, MathHelper.Pi);
+        private Vector2 _mouseAbsolute = Vector2.Zero;
+        private Vector2 _smoothMouse = Vector2.Zero;
+        public float Sensitivity = 20f;
+        public float Smoothing = 30f;
+        public Vector2 Clamp = new Vector2(MathHelper.Pi * 2, MathHelper.Pi);
 
         /// <summary>
         /// Constructor for a spaceship
@@ -103,26 +103,26 @@ namespace CS437
         /// <param name="scale"></param>
         /// <param name="reloadSpeed"></param>
         public Spaceship(ContentManager Content,
-            Vector3 Position,
-            Vector3 CameraOffset,
+            Vector3 position,
+            Vector3 cameraOffset,
             Func<Torpedo> fireTorpedo,
             float scale = 1,
             int reloadSpeed = 1000)
         {
-            this.Position = Position;
-            this.CameraOffset = CameraOffset;
+            Position = position;
+            CameraOffset = cameraOffset;
 
-            this.fireTorpedo = fireTorpedo;
+            FireTorpedo = fireTorpedo;
 
-            this.scale = scale;
-            this.reloadSpeed = reloadSpeed;
+            _scale = scale;
+            ReloadSpeed = reloadSpeed;
 
             Orientation = Quaternion.Identity;
 
-            reloadTimer = 0;
+            _reloadTimer = 0;
 
-            spaceship = Content.Load<Model>("Models/spaceship");
-            spaceshipTexture = Content.Load<Texture2D>("Textures/spaceship");
+            _spaceship = Content.Load<Model>("Models/spaceship");
+            _spaceshipTexture = Content.Load<Texture2D>("Textures/spaceship");
         }
 
         public void addRoll(float amount, float time)
@@ -159,43 +159,19 @@ namespace CS437
             Velocity += Vector3.Negate(Velocity) * amount * time;
         }
 
-        /// <summary>
-        /// Draw the spaceship using the given camera
-        /// </summary>
-        /// <param name="camera"></param>
-        public void Draw(Camera camera)
-        {
-            // Console.WriteLine("View:       " + view);
-            foreach (ModelMesh mesh in spaceship.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.World = Matrix.CreateScale(scale)
-                        * Matrix.CreateFromQuaternion(Orientation)
-                        * Matrix.CreateTranslation(Position);
-                    effect.View = camera.View;
-                    effect.Projection = camera.Projection;
-                    effect.TextureEnabled = true;
-                    effect.Texture = spaceshipTexture;
-                }
-                mesh.Draw();
-            }
-        }
-
         public void Update(GameTime gameTime, GameInput input)
         {
             float t = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             //////////////////// Look ////////////////////
-            addYaw(-input.mouseDelta.X * 0.1f, t);
-            addPitch(input.mouseDelta.Y * 0.1f, t);
-            if (input.keyboard.IsKeyDown(Keys.D))
-                addRoll(1.2f, t);
-            if (input.keyboard.IsKeyDown(Keys.A))
+            addYaw(-input.MouseDelta.X * 0.1f, t);
+            addPitch(input.MouseDelta.Y * 0.1f, t);
+            if (input.KeyboardState.IsKeyDown(Keys.D))
                 addRoll(-1.2f, t);
+            if (input.KeyboardState.IsKeyDown(Keys.A))
+                addRoll(1.2f, t);
 
-            // Vector2 scaledMouse = input.mouseDelta * (sensitivity * smoothing * t);
+            // Vector2 scaledMouse = input.MouseDelta * (sensitivity * smoothing * t);
             // _smoothMouse = Vector2.Lerp(_smoothMouse, scaledMouse, 1f / smoothing);
             // _mouseAbsolute += _smoothMouse;
             // _mouseAbsolute = Vector2.Clamp(_mouseAbsolute, clampInDegrees * -0.5f, clampInDegrees * 0.5f);
@@ -205,25 +181,48 @@ namespace CS437
             // Orientation = yrotator * Orientation;
 
             //////////////////// Move ////////////////////
-            if (input.keyboard.IsKeyDown(Keys.W))
+            if (input.KeyboardState.IsKeyDown(Keys.W))
                 addThrust(-400f, t);
-            if (input.keyboard.IsKeyDown(Keys.S))
+            if (input.KeyboardState.IsKeyDown(Keys.S))
                 addThrust(400f, t);
-            if (input.keyboard.IsKeyDown(Keys.LeftShift))
+            if (input.KeyboardState.IsKeyDown(Keys.LeftShift))
                 slowDown(3f, t);
 
             Position += Velocity * t;
 
             //////////////////// Projectiles ////////////////////
-            if (reloadTimer > 0) reloadTimer -= gameTime.ElapsedGameTime.Milliseconds;
+            if (_reloadTimer > 0) _reloadTimer -= gameTime.ElapsedGameTime.Milliseconds;
 
-            if (input.keyboard.IsKeyDown(Keys.Space))
+            if (input.KeyboardState.IsKeyDown(Keys.Space))
             {
-                if (reloadTimer <= 0)
+                if (_reloadTimer <= 0)
                 {
-                    fireTorpedo();
-                    reloadTimer = reloadSpeed;
+                    FireTorpedo();
+                    _reloadTimer = ReloadSpeed;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Draw the spaceship using the given camera
+        /// </summary>
+        /// <param name="camera"></param>
+        public void Draw(Camera camera)
+        {
+            foreach (ModelMesh mesh in _spaceship.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.World = Matrix.CreateScale(_scale)
+                        * Matrix.CreateFromQuaternion(Orientation)
+                        * Matrix.CreateTranslation(Position);
+                    effect.View = camera.View;
+                    effect.Projection = camera.Projection;
+                    effect.TextureEnabled = true;
+                    effect.Texture = _spaceshipTexture;
+                }
+                mesh.Draw();
             }
         }
     }

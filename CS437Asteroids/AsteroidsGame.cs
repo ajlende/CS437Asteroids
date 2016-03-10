@@ -69,7 +69,7 @@ namespace CS437Asteroids
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            input.pollInput();
+            input.PollInput();
 
             scene.Update(gameTime, input);
 

@@ -7,17 +7,18 @@ namespace CS437
 {
     internal class Torpedo
     {
-        private Model torpedo;
-        private float scale = 10f;
+        private Model _torpedo;
+        private float _scale = 10f;
 
         public Vector3 Position { get; set; }
         public Vector3 Velocity { get; set; }
 
-        public Torpedo(ContentManager Content, Vector3 Position, Vector3 Velocity)
+        public Torpedo(ContentManager Content, Vector3 position, Vector3 velocity)
         {
-            this.Position = Position;
-            this.Velocity = Velocity;
-            torpedo = Content.Load<Model>("Models/alt-torpedo");
+            Position = position;
+            Velocity = velocity;
+
+            _torpedo = Content.Load<Model>("Models/alt-torpedo");
         }
 
         public void Update(GameTime gameTime)
@@ -30,7 +31,7 @@ namespace CS437
         public void Draw(Camera camera)
         {
             // TODO: Asteroid Draw
-            foreach (ModelMesh mesh in torpedo.Meshes)
+            foreach (ModelMesh mesh in _torpedo.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
@@ -47,7 +48,7 @@ namespace CS437
                     // effect.DirectionalLight0.Enabled = false;
                     // effect.DirectionalLight1.Enabled = false;
                     // effect.DirectionalLight2.Enabled = false;
-                    effect.World = Matrix.CreateScale(scale) * Matrix.CreateTranslation(Position);
+                    effect.World = Matrix.CreateScale(_scale) * Matrix.CreateTranslation(Position);
                     effect.View = camera.View;
                     effect.Projection = camera.Projection;
                 }

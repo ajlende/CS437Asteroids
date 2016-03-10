@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
+/// <summary>
+/// 98% of the skybox code is credited to RB Whitaker.
+/// This code is taken from his tutorial on skyboxes which can be found at http://rbwhitaker.wikidot.com/skyboxes-1
+/// </summary>
 namespace CS437
 {
     /// <summary>

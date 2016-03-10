@@ -7,42 +7,42 @@ namespace CS437
 {
     class Asteroid
     {
-        public enum Size { LARGE, MEDIUM, SMALL }
+        public enum AsteroidSize { LARGE, MEDIUM, SMALL }
 
-        private Texture2D asteroidTexture;
-        private Model asteroid;
+        private Texture2D _asteroidTexture;
+        private Model _asteroid;
 
-        public Vector3 position { get; set; }
+        public Vector3 Position { get; set; }
 
-        public Size size;
+        public AsteroidSize Size;
 
-        public float mass;
+        public float Mass;
 
-        public float scale;
+        public float Scale;
 
-        public Asteroid(ContentManager Content, Vector3 position, Size size)
+        public Asteroid(ContentManager Content, Vector3 position, AsteroidSize size)
         {
-            this.size = size;
-            this.position = position;
+            Size = size;
+            Position = position;
 
-            asteroidTexture = Content.Load<Texture2D>("Textures/seamless_rock");
+            _asteroidTexture = Content.Load<Texture2D>("Textures/seamless_rock");
 
             switch (size)
             {
-                case Size.LARGE:
-                    scale = 20f;
-                    mass = 1200f;
-                    asteroid = Content.Load<Model>("Models/asteroid-large");
+                case AsteroidSize.LARGE:
+                    Scale = 20f;
+                    Mass = 1200f;
+                    _asteroid = Content.Load<Model>("Models/asteroid-large");
                     break;
-                case Size.MEDIUM:
-                    scale = 15f;
-                    mass = 600f;
-                    asteroid = Content.Load<Model>("Models/asteroid-medium");
+                case AsteroidSize.MEDIUM:
+                    Scale = 15f;
+                    Mass = 600f;
+                    _asteroid = Content.Load<Model>("Models/asteroid-medium");
                     break;
-                case Size.SMALL:
-                    scale = 10f;
-                    mass = 300f;
-                    asteroid = Content.Load<Model>("Models/asteroid-small");
+                case AsteroidSize.SMALL:
+                    Scale = 10f;
+                    Mass = 300f;
+                    _asteroid = Content.Load<Model>("Models/asteroid-small");
                     break;
             }
         }
@@ -55,7 +55,7 @@ namespace CS437
         public void Draw(Camera camera)
         {
             // TODO: Asteroid Draw
-            foreach (ModelMesh mesh in asteroid.Meshes)
+            foreach (ModelMesh mesh in _asteroid.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
@@ -69,12 +69,12 @@ namespace CS437
                     effect.DiffuseColor = new Vector3(99f / 255f, 91f / 255f, 80f / 255f);
                     effect.SpecularPower = 2;
                     effect.DirectionalLight1.Enabled = false;
-                    effect.World = Matrix.CreateScale(scale) * Matrix.CreateTranslation(position);
+                    effect.World = Matrix.CreateScale(Scale) * Matrix.CreateTranslation(Position);
                     effect.View = camera.View;
                     effect.Projection = camera.Projection;
                     effect.TextureEnabled = true;
                     effect.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
-                    effect.Texture = asteroidTexture;
+                    effect.Texture = _asteroidTexture;
                 }
 
                 mesh.Draw();

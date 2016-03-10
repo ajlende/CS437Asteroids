@@ -21,10 +21,10 @@ namespace CS437
             set { var u = value; u.Normalize(); _up = u; }
         }
 
-        private float fieldOfView;
-        private float aspectRatio;
-        private float nearPlaneDistance;
-        private float farPlaneDistance;
+        private float _fieldOfView;
+        private float _aspectRatio;
+        private float _nearPlaneDistance;
+        private float _farPlaneDistance;
 
         public Matrix View
         {
@@ -33,25 +33,26 @@ namespace CS437
 
         public Matrix Projection
         {
-            get { return Matrix.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance); }
+            get { return Matrix.CreatePerspectiveFieldOfView(_fieldOfView, _aspectRatio, _nearPlaneDistance, _farPlaneDistance); }
         }
 
         public Camera(
-            Vector3? Position = null,
-            Vector3? Forward = null,
-            Vector3? Up = null,
+            Vector3? position = null,
+            Vector3? forward = null,
+            Vector3? up = null,
             float? fieldOfView = null,
             float? nearPlaneDistance = null,
             float? farPlaneDistance = null,
             float? aspectRatio = null)
         {
-            this.Position = Position ?? Vector3.Zero;
-            this.Forward = Forward ?? Vector3.Forward;
-            this.Up = Up ?? Vector3.Up;
-            this.fieldOfView = fieldOfView ?? MathHelper.PiOver4;
-            this.nearPlaneDistance = nearPlaneDistance ?? 0.1f;
-            this.farPlaneDistance = farPlaneDistance ?? 10000.0f;
-            this.aspectRatio = aspectRatio ?? 800f / 600f;
+            Position = position ?? Vector3.Zero;
+            Forward = forward ?? Vector3.Forward;
+            Up = up ?? Vector3.Up;
+
+            _fieldOfView = fieldOfView ?? MathHelper.PiOver4;
+            _nearPlaneDistance = nearPlaneDistance ?? 0.1f;
+            _farPlaneDistance = farPlaneDistance ?? 10000.0f;
+            _aspectRatio = aspectRatio ?? 800f / 600f;
         }
 
         public void Update(Spaceship playerShip)
