@@ -2,60 +2,61 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using BulletSharp;
 
 namespace CS437
 {
-    class Asteroid
+    class Asteroid : Actor
     {
         public enum AsteroidSize { LARGE, MEDIUM, SMALL }
 
-        private Texture2D _asteroidTexture;
-        private Model _asteroid;
-
-        public Vector3 Position { get; set; }
-
         public AsteroidSize Size;
 
-        public float Mass;
-
-        public float Scale;
-
-        public Asteroid(ContentManager Content, Vector3 position, AsteroidSize size)
+        public Asteroid(DynamicsWorld DynamicsWorld,
+            Func<string, Model> loadModel,
+            Func<string, Texture2D> loadTexture,
+            Vector3 position,
+            AsteroidSize size)
+            : base(DynamicsWorld, null, null, null, 0, 10)
         {
             Size = size;
-            Position = position;
+            Body.Translate(position);
 
-            _asteroidTexture = Content.Load<Texture2D>("Textures/seamless_rock");
+            _texture = loadTexture("Textures/seamless_rock");
 
             switch (size)
             {
                 case AsteroidSize.LARGE:
-                    Scale = 20f;
-                    Mass = 1200f;
-                    _asteroid = Content.Load<Model>("Models/asteroid-large");
+                    Scale = 4f;
+                    Mass = 120f;
+                    CollisionShape = new SphereShape(12.125f);
+                    _model = loadModel("Models/asteroid-large");
                     break;
                 case AsteroidSize.MEDIUM:
-                    Scale = 15f;
-                    Mass = 600f;
-                    _asteroid = Content.Load<Model>("Models/asteroid-medium");
+                    Scale = 2f;
+                    Mass = 60f;
+                    CollisionShape = new SphereShape(3.125f);
+                    _model = loadModel("Models/asteroid-medium");
                     break;
                 case AsteroidSize.SMALL:
-                    Scale = 10f;
-                    Mass = 300f;
-                    _asteroid = Content.Load<Model>("Models/asteroid-small");
+                    Scale = 1f;
+                    Mass = 30f;
+                    CollisionShape = new SphereShape(1.125f);
+                    _model = loadModel("Models/asteroid-small");
                     break;
             }
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             // TODO: Asteroid Update
+            base.Update(gameTime);
         }
 
-        public void Draw(Camera camera)
+        public override void Draw(Camera camera)
         {
             // TODO: Asteroid Draw
-            foreach (ModelMesh mesh in _asteroid.Meshes)
+            foreach (ModelMesh mesh in _model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
@@ -74,7 +75,7 @@ namespace CS437
                     effect.Projection = camera.Projection;
                     effect.TextureEnabled = true;
                     effect.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
-                    effect.Texture = _asteroidTexture;
+                    effect.Texture = _texture;
                 }
 
                 mesh.Draw();
