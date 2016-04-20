@@ -66,12 +66,14 @@
     <Compile Include="AsteroidsGame.cs" />
     <Compile Include="GameInput.cs" />
     <Compile Include="GamePhysics.cs" />
+    <Compile Include="ModelDataExtractor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Skybox.cs" />
     <Compile Include="Spaceship.cs" />
     <Compile Include="Torpedo.cs" />
+    <Compile Include="WorldSphere.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BulletSharp">

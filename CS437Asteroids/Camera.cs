@@ -55,16 +55,19 @@ namespace CS437
             _aspectRatio = aspectRatio ?? 800f / 600f;
         }
 
-        public void Update(Spaceship parent)
+        public void Update(Actor parent, Vector3 CameraOffset, Quaternion CameraRotation)
         {
-            Position = parent.Position;
-            Position += parent.Right * (parent.CameraOffset.X);
-            Position += parent.Up * (parent.CameraOffset.Y);
-            Position += parent.Forward * (parent.CameraOffset.Z);
             Up = parent.Up;
             Forward = Vector3.Negate(parent.Forward);
-            Up = Vector3.Transform(Up, parent.CameraRotation);
-            Forward = Vector3.Transform(Forward, parent.CameraRotation);
+            Up = Vector3.Transform(Up, CameraRotation);
+            Forward = Vector3.Transform(Forward, CameraRotation);
+            Position = parent.Position;
+            Position += parent.Right * (CameraOffset.X);
+            Position += parent.Up * (CameraOffset.Y);
+            Position += parent.Forward * (CameraOffset.Z);
+
+            // Up = Vector3.Normalize((Vector3.Transform(Vector3.Up, parent.CameraRotation)) + parent.Up);
+            // Forward = Vector3.Normalize(Vector3.Negate(Vector3.Transform(Vector3.Forward, parent.CameraRotation)));
         }
     }
 }

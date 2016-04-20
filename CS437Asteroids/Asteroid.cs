@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
 using BulletSharp;
 
 namespace CS437
@@ -12,12 +11,14 @@ namespace CS437
 
         public AsteroidSize Size;
 
+        public float Density = 2000f; // kg/m^3
+
         public Asteroid(DynamicsWorld DynamicsWorld,
             Func<string, Model> loadModel,
             Func<string, Texture2D> loadTexture,
             Vector3 position,
             AsteroidSize size)
-            : base(DynamicsWorld, null, null, null, 0, 10)
+            : base(DynamicsWorld, null, null, null, GamePhysics.CollisionTypes.Asteroid, GamePhysics.CollisionTypes.Everything, 0, 10)
         {
             Size = size;
             Body.Translate(position);
@@ -28,23 +29,23 @@ namespace CS437
             {
                 case AsteroidSize.LARGE:
                     Scale = 4f;
-                    Mass = 120f;
-                    CollisionShape = new SphereShape(12.125f);
                     _model = loadModel("Models/asteroid-large");
                     break;
                 case AsteroidSize.MEDIUM:
                     Scale = 2f;
-                    Mass = 60f;
-                    CollisionShape = new SphereShape(3.125f);
                     _model = loadModel("Models/asteroid-medium");
                     break;
                 case AsteroidSize.SMALL:
                     Scale = 1f;
-                    Mass = 30f;
-                    CollisionShape = new SphereShape(1.125f);
                     _model = loadModel("Models/asteroid-small");
                     break;
             }
+
+            var radius = _model.Meshes[0].BoundingSphere.Radius;
+            var volume = (4.0f / 3.0f) * MathHelper.Pi * radius * radius  * radius;
+            Mass = volume * Density;
+            CollisionShape = new SphereShape(radius * Scale);
+            Body.SetMassProps(Mass, Vector3.Zero);
         }
 
         public override void Update(GameTime gameTime)
@@ -70,7 +71,9 @@ namespace CS437
                     effect.DiffuseColor = new Vector3(99f / 255f, 91f / 255f, 80f / 255f);
                     effect.SpecularPower = 2;
                     effect.DirectionalLight1.Enabled = false;
-                    effect.World = Matrix.CreateScale(Scale) * Matrix.CreateTranslation(Position);
+                    effect.World = Matrix.CreateScale(Scale)
+                        * Matrix.CreateFromQuaternion(Orientation)
+                        * Matrix.CreateTranslation(Position);
                     effect.View = camera.View;
                     effect.Projection = camera.Projection;
                     effect.TextureEnabled = true;

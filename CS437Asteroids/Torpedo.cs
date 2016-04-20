@@ -1,37 +1,32 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
+using BulletSharp;
 
 namespace CS437
 {
-    internal class Torpedo
+    internal class Torpedo : Actor
     {
-        private Model _torpedo;
-        private float _scale = 10f;
-
-        public Vector3 Position { get; set; }
-        public Vector3 Velocity { get; set; }
-
-        public Torpedo(ContentManager Content, Vector3 position, Vector3 velocity)
+        public Torpedo(DynamicsWorld DynamicsWorld, Func<string, Model> loadModel, Vector3 position, Vector3 velocity) : base(DynamicsWorld, null, null, null, GamePhysics.CollisionTypes.Torpedo, GamePhysics.CollisionTypes.Asteroid, 0, 1)
         {
-            Position = position;
-            Velocity = velocity;
-
-            _torpedo = Content.Load<Model>("Models/alt-torpedo");
+            _model = loadModel("Models/alt-torpedo");
+            Body.Translate(position);
+            Scale = 3f;
+            var radius = _model.Meshes[0].BoundingSphere.Radius;
+            Mass = 1f;
+            CollisionShape = new SphereShape(radius * Scale);
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             // TODO: Torpedo Update
-            float t = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Position += Velocity * t;
+            base.Update(gameTime);
         }
 
-        public void Draw(Camera camera)
+        public override void Draw(Camera camera)
         {
             // TODO: Asteroid Draw
-            foreach (ModelMesh mesh in _torpedo.Meshes)
+            foreach (ModelMesh mesh in _model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
@@ -48,11 +43,12 @@ namespace CS437
                     // effect.DirectionalLight0.Enabled = false;
                     // effect.DirectionalLight1.Enabled = false;
                     // effect.DirectionalLight2.Enabled = false;
-                    effect.World = Matrix.CreateScale(_scale) * Matrix.CreateTranslation(Position);
+                    effect.World = Matrix.CreateScale(Scale)
+                        * Matrix.CreateFromQuaternion(Orientation)
+                        * Matrix.CreateTranslation(Position);
                     effect.View = camera.View;
                     effect.Projection = camera.Projection;
                 }
-
                 mesh.Draw();
             }
         }

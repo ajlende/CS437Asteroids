@@ -67,7 +67,10 @@ namespace CS437Asteroids
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                // scene.ExitPhysics();
                 Exit();
+            }
 
             input.PollInput();
 

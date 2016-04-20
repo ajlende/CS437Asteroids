@@ -47,17 +47,23 @@ namespace CS437
             Model model,
             Texture2D texture = null,
             CollisionShape shape = null,
+            GamePhysics.CollisionTypes collisionType = GamePhysics.CollisionTypes.Nothing,
+            GamePhysics.CollisionTypes collidesWith = GamePhysics.CollisionTypes.Nothing,
             float scale = 1f,
             float mass = 0f)
         {
             Mass = mass;
             Scale = scale;
-            _texture = texture;
             var collisionShape = shape ?? new BoxShape(5f, 5f, 5f);
             var motionState = new DefaultMotionState();
             var constructionInfo = new RigidBodyConstructionInfo(Mass, motionState, collisionShape);
             Body = new RigidBody(constructionInfo);
-            DynamicsWorld.AddRigidBody(Body);
+            Body.UserObject = this;
+            Body.UserIndex = (int) collisionType;
+
+            Body.Restitution = 0.5f;
+
+            DynamicsWorld.AddRigidBody(Body, (short) collisionType, (short) collidesWith);
         }
 
         public virtual void Update(GameTime gameTime)
@@ -85,6 +91,11 @@ namespace CS437
                 }
                 mesh.Draw();
             }
+        }
+
+        public virtual void Dispose()
+        {
+            Body.Dispose();
         }
     }
 }
